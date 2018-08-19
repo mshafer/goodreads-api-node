@@ -124,6 +124,18 @@ const Goodreads = function(credentials, callbackURL) {
   };
 
   /**
+   * setAccessToken
+   *
+   * @access public
+   * @param {object} token ACCESS_TOKEN and ACCESS_TOKEN_SECRET
+   */
+  function setAccessToken(token) {
+    ACCESS_TOKEN = token.ACCESS_TOKEN;
+    ACCESS_TOKEN_SECRET = token.ACCESS_TOKEN_SECRET;
+    OAUTHENTICATED = true;
+  };
+
+  /**
    * getAccessToken
    *
    * @access public
@@ -136,11 +148,11 @@ const Goodreads = function(credentials, callbackURL) {
 
         OAUTH.getOAuthAccessToken(OAUTH_TOKEN, OAUTH_TOKEN_SECRET, 1, (error, accessToken, accessTokenSecret, results) => {
           if (error) reject(new GoodreadsApiError(error.data.split("\n")[0], 'getAccessToken()'));
-
-          _setAccessToken({ ACCESS_TOKEN: accessToken, ACCESS_TOKEN_SECRET: accessTokenSecret });
+          const token = { ACCESS_TOKEN: accessToken, ACCESS_TOKEN_SECRET: accessTokenSecret };
+          _setAccessToken(token);
           OAUTHENTICATED = true;
 
-          resolve();
+          resolve(token);
         });
       } else reject(new GoodreadsApiError("No Request Token found. call getRequestToken()"));
     });
@@ -1076,6 +1088,7 @@ const Goodreads = function(credentials, callbackURL) {
   return {
     initOAuth,
     getRequestToken,
+    setAccessToken,
     getAccessToken,
     _setOAuthToken,
     getBooksByAuthor,
